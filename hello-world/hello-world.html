@@ -1,8 +1,16 @@
 <script>
-	var proto = Object.create(HTMLElement.prototype);
+	var proto = Object.create(HTMLElement.prototype, {
+		name: {
+			value:'World'
+		}
+	});
 
 	proto.createdCallback = function () {
-		this.textContent = "I am a custom element saying Hello World! ";
+		if (!this.getAttribute('name')) {
+			this.setAttribute('name', this.name);
+		}
+		this.textContent = "I am a custom element saying Hello to " + this.getAttribute('name').toUpperCase() + "! ";
+		this.attributes.name = "World";
 	};
 
 	proto.attachedCallback = function () {
