@@ -21,14 +21,26 @@
 			width: 100%;
 			cursor: pointer;
 		}
+		.header {
+			background: #0099cc;
+			height: 50px;
+			text-align: center;
+			margin-bottom: 20px;
+			color: #fff;
+		    font-family:  Arial;
+		}
+		.headerText {
+			padding-top: 10px;
+		}
 	</style>
 
 	<div id="container">
+		<div class="header"></div>
 		<div class="row">
-			<input id="username" type="text" placeholder="enter username">
+			<input id="username" type="text" placeholder="username">
 		</div>
 		<div class="row">
-			<input id="password" type="password" placeholder="enter password">
+			<input id="password" type="password" placeholder="password">
 		</div>	
 		<div class="row">
 			<input id="btnLogin" type="button" value="Log in">
@@ -55,7 +67,8 @@
 
 		proto.createdCallback = function () {
 			var clone = document.importNode(content.content, true);
-			this.createShadowRoot().appendChild(clone);
+			this.appendChild(clone);
+			this._setHeader(clone);
 		};
 
 		proto.attachedCallback = function () {
@@ -68,6 +81,14 @@
 
 		proto.attributeChangedCallback = function (attrName, oldVal, newVal) {
 			console.log('attribute ', attrName, ' is changed from ', oldVal, ' to ', newVal);
+		};
+
+		proto._setHeader = function (clone) {
+			var headerText = this.getAttribute('header');
+			if (!headerText) {
+				headerText = "Login Widget";
+			}
+			this.querySelector('.header').innerHTML = '<h2 class="headerText">'+headerText+'</h2>';
 		};
 
 		document.registerElement('t-login-widget', {
