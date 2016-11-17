@@ -48,101 +48,105 @@
 	</div>
 </template>
 <script>
-	(function () {
+    (function () {
 
-		'use strict'
+        'use strict'
 
-		var content = document._currentScript.ownerDocument.querySelector('template');
+        var content = document._currentScript.ownerDocument.querySelector('template');
 
-		if (!content) {
-			throw Error("Couldn't find the template");
-		}
+        if (!content) {
+            throw Error("Couldn't find the template");
+        }
 
-		var proto = Object.create(HTMLElement.prototype, {
-			data: {
-				value: {
-					userName: '',
-					password: ''
-				}
-			}
-		});
+        var proto = Object.create(HTMLElement.prototype, {
+            data: {
+                value: {
+                    username: '',
+                    password: ''
+                }
+            }
+        });
 
-		proto.createdCallback = function () {
-			var clone = document.importNode(content.content, true);
-			this.appendChild(clone);
-			this._setHeader(clone);
-		};
+        proto.createdCallback = function () {
+            var clone = document.importNode(content.content, true);
+            this.appendChild(clone);
+            this._setHeader(clone);
+        };
 
-		proto.attachedCallback = function () {
-			var button = this.querySelector('#btnLogin');
-			button.addEventListener('click', this._onLoginClick.bind(this));
-		};
+        proto.attachedCallback = function () {
+            var button = this.querySelector('#btnLogin');
+            button.addEventListener('click', this._onLoginClick.bind(this));
+        };
 
-		proto.detachedCallback = function () {
-			console.log('instance of t-login-widget element is destroyed');
-		};
+        proto.detachedCallback = function () {
+            console.log('instance of t-login-widget element is destroyed');
+        };
 
-		proto.attributeChangedCallback = function (attrName, oldVal, newVal) {
-			console.log('attribute ', attrName, ' is changed from ', oldVal, ' to ', newVal);
-		};
+        proto.attributeChangedCallback = function (attrName, oldVal, newVal) {
+            console.log('attribute ', attrName, ' is changed from ', oldVal, ' to ', newVal);
+        };
 
-		proto._setHeader = function (clone) {
-			var headerText = this.getAttribute('header');
-			if (!headerText) {
-				headerText = "Login Widget";
-			}
-			this.querySelector('.header').innerHTML = '<h2 class="headerText">'+headerText+'</h2>';
-		};
+        proto._setHeader = function (clone) {
+            var headerText = this.getAttribute('header');
+            if (!headerText) {
+                headerText = "Login Widget";
+            }
+            this.querySelector('.header').innerHTML = '<h2 class="headerText">' + headerText + '</h2>';
+        };
 
-		proto._onLoginClick = function (e) {			
-			var username = this.querySelector('#username').value;
-			var password = this.querySelector('#password').value;
+        proto._onLoginClick = function (e) {
+            var username = this.querySelector('#username').value;
+            var password = this.querySelector('#password').value;
 
-			if (!username || !password) {
-				throw Error('username or password can not be empty');
-				this._showValidation();
-				return;
-			}
+            if (!username || !password) {
+                throw Error('username or password can not be empty');
+                this._showValidation();
+                return;
+            }
 
-			this.data.username = username;
-			this.data.password = password;
+            this.data.username = username;
+            this.data.password = password;
 
-			this._login();
-		};
+            this._login();
+        };
 
-		proto._showValidation = function () {
-			
-		};
+        proto._showValidation = function () {
 
-		proto._login = function () {
+        };
 
-			var url = this.getAttribute('post-url');
+        proto._login = function () {
 
-			if (!url) {
-				return;				
-			}
+            var url = this.getAttribute('post-url');
 
-			var data = new FormData();
-			data.append('username', this.data.username);
-			data.append('password', this.data.password);
+            if (!url) {
+                this._loginSuccess();
+                return;
+            }
 
-			var xhr = new XMLHttpRequest();
-			xhr.open('POST', url, true);
-			xhr.onload = function (e) {
-			    console.log(e.detail);
-			};
-			xhr.onerror = function (e) {
-			    console.log(e.detail);
-			};
-			xhr.send(data);
-		};
+            var http = new XMLHttpRequest();
+            http.open("POST", url, true);
 
-		proto._loginSuccess = function () {
+            //Send the proper header information along with the request
+            http.setRequestHeader("Content-type", "application/json");
 
-		};
+            http.onreadystatechange = function () {//Call a function when the state changes.
+                if (http.readyState == 4 && http.status == 200) {
+                    this._loginSuccess();
+                }
+            }.bind(this);
 
-		document.registerElement('t-login-widget', {
-			prototype: proto
-		});
-	})();
+            http.send(JSON.stringify(this.data));
+        };
+
+        proto._loginSuccess = function () {
+            this.querySelector('#username').value = "";
+            this.querySelector('#password').value = "";
+            var event = new CustomEvent("login-success", { "detail": this.data });
+            document.dispatchEvent(event);
+        };
+
+        document.registerElement('t-login-widget', {
+            prototype: proto
+        });
+    })();
 </script>
