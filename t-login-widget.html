@@ -1,5 +1,8 @@
 <template>
 	<style>
+        #container {
+            background: white;
+        }
 		.row {
 			margin-bottom: 20px;
 		}
@@ -12,8 +15,11 @@
 		    font-size: 18px;
 		    outline: 0;
 			width: 100%;
-			padding-bottom: 10px;
+			padding: 10px 0;
 		}
+        input:required {
+            box-shadow: 0px 2px 10px rgba(200, 0, 0, 1);
+        }
 		#btnLogin{
 			padding: 10px;
 			color: #fff;
@@ -22,7 +28,7 @@
 			cursor: pointer;
 		}
 		.header {
-			background: #0099cc;
+			background: #147be1;
 			height: 50px;
 			text-align: center;
 			margin-bottom: 20px;
@@ -87,7 +93,9 @@
         };
 
         proto._setHeader = function (clone) {
+
             var headerText = this.getAttribute('header');
+
             if (!headerText) {
                 headerText = "Login Widget";
             }
@@ -98,20 +106,33 @@
             var username = this.querySelector('#username').value;
             var password = this.querySelector('#password').value;
 
-            if (!username || !password) {
-                throw Error('username or password can not be empty');
-                this._showValidation();
-                return;
+            if (this._validate(username, password)) {
+
+                this.data.username = username;
+                this.data.password = password;
+
+                this._login();
             }
-
-            this.data.username = username;
-            this.data.password = password;
-
-            this._login();
         };
 
-        proto._showValidation = function () {
+        proto._validate = function (username, password) {
 
+            var isValid = false;
+
+            if (!username) {
+                this.querySelector('#username').setAttribute('required', true);
+            } else {
+                this.querySelector('#username').removeAttribute('required');
+                isValid = true;
+            }
+            if (!password) {
+                this.querySelector('#password').setAttribute('required', true);
+            } else {
+                this.querySelector('#password').removeAttribute('required');
+                isValid = true;
+            }
+
+            return !!username && !!password;
         };
 
         proto._login = function () {
