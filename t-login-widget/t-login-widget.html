@@ -50,6 +50,8 @@
 <script>
 	(function () {
 
+		'use strict'
+
 		var content = document._currentScript.ownerDocument.querySelector('template');
 
 		if (!content) {
@@ -72,7 +74,8 @@
 		};
 
 		proto.attachedCallback = function () {
-			console.log('New instance of t-login-widget element is created');
+			var button = this.querySelector('#btnLogin');
+			button.addEventListener('click', this._onLoginClick.bind(this));
 		};
 
 		proto.detachedCallback = function () {
@@ -89,6 +92,53 @@
 				headerText = "Login Widget";
 			}
 			this.querySelector('.header').innerHTML = '<h2 class="headerText">'+headerText+'</h2>';
+		};
+
+		proto._onLoginClick = function (e) {			
+			var username = this.querySelector('#username').value;
+			var password = this.querySelector('#password').value;
+
+			if (!username || !password) {
+				throw Error('username or password can not be empty');
+				this._showValidation();
+				return;
+			}
+
+			this.data.username = username;
+			this.data.password = password;
+
+			this._login();
+		};
+
+		proto._showValidation = function () {
+			
+		};
+
+		proto._login = function () {
+
+			var url = this.getAttribute('post-url');
+
+			if (!url) {
+				return;				
+			}
+
+			var data = new FormData();
+			data.append('username', this.data.username);
+			data.append('password', this.data.password);
+
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', url, true);
+			xhr.onload = function (e) {
+			    console.log(e.detail);
+			};
+			xhr.onerror = function (e) {
+			    console.log(e.detail);
+			};
+			xhr.send(data);
+		};
+
+		proto._loginSuccess = function () {
+
 		};
 
 		document.registerElement('t-login-widget', {
