@@ -5,6 +5,18 @@
 		this.textContent = "I am a custom element saying Hello World! ";
 	};
 
+	proto.attachedCallback = function () {
+		console.log('New instance of hello world element is created');
+	};
+
+	proto.detachedCallback = function () {
+		console.log('instance of hello world element is destroyed');
+	};
+
+	proto.attributeChangedCallback = function (attrName, oldVal, newVal) {
+		console.log('attribute ', attrName, ' is changed from ', oldVal, ' to ', newVal);
+	};
+
 	document.registerElement('hello-world', {
 		prototype: proto
 	});
