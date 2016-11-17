@@ -1,0 +1,11 @@
+<script>
+	var proto = Object.create(HTMLElement.prototype);
+
+	proto.createdCallback = function () {
+		this.textContent = "I am a custom element saying Hello World! ";
+	};
+
+	document.registerElement('hello-world', {
+		prototype: proto
+	});
+</script>
