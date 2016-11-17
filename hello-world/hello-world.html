@@ -1,31 +1,61 @@
+<template>
+	<style>
+		.row {
+			margin-bottom: 10px;
+		}
+	</style>
+
+	<div id="container">
+		
+	</div>
+
+	<div class="row">
+		<input id="username" type="text" placeholder="enter username">
+	</div>
+	<div class="row">
+		<input id="password" type="password" placeholder="enter password">
+	</div>	
+	<div class="row">
+		<input id="btnLogin" type="button" value="Log in">
+	</div>
+</template>
 <script>
-	var proto = Object.create(HTMLElement.prototype, {
-		name: {
-			value:'World'
+	(function () {
+
+		var content = document._currentScript.ownerDocument.querySelector('template');
+
+		if (!content) {
+			throw Error("Couldn't find the template");
 		}
-	});
 
-	proto.createdCallback = function () {
-		if (!this.getAttribute('name')) {
-			this.setAttribute('name', this.name);
-		}
-		this.textContent = "I am a custom element saying Hello to " + this.getAttribute('name').toUpperCase() + "! ";
-		this.attributes.name = "World";
-	};
+		var proto = Object.create(HTMLElement.prototype, {
+			name: {
+				value:'World'
+			}
+		});
 
-	proto.attachedCallback = function () {
-		console.log('New instance of hello world element is created');
-	};
+		proto.createdCallback = function () {
+			if (!this.getAttribute('name')) {
+				this.setAttribute('name', this.name);
+			}
+			var clone = document.importNode(content.content, true);
+			this.createShadowRoot().appendChild(clone);
+		};
 
-	proto.detachedCallback = function () {
-		console.log('instance of hello world element is destroyed');
-	};
+		proto.attachedCallback = function () {
+			console.log('New instance of hello world element is created');
+		};
 
-	proto.attributeChangedCallback = function (attrName, oldVal, newVal) {
-		console.log('attribute ', attrName, ' is changed from ', oldVal, ' to ', newVal);
-	};
+		proto.detachedCallback = function () {
+			console.log('instance of hello world element is destroyed');
+		};
 
-	document.registerElement('hello-world', {
-		prototype: proto
-	});
+		proto.attributeChangedCallback = function (attrName, oldVal, newVal) {
+			console.log('attribute ', attrName, ' is changed from ', oldVal, ' to ', newVal);
+		};
+
+		document.registerElement('hello-world', {
+			prototype: proto
+		});
+	})();
 </script>
