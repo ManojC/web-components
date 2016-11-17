@@ -29,32 +29,32 @@
 		}
 
 		var proto = Object.create(HTMLElement.prototype, {
-			name: {
-				value:'World'
+			data: {
+				value: {
+					userName: '',
+					password: ''
+				}
 			}
 		});
 
 		proto.createdCallback = function () {
-			if (!this.getAttribute('name')) {
-				this.setAttribute('name', this.name);
-			}
 			var clone = document.importNode(content.content, true);
 			this.createShadowRoot().appendChild(clone);
 		};
 
 		proto.attachedCallback = function () {
-			console.log('New instance of hello world element is created');
+			console.log('New instance of t-login-widget element is created');
 		};
 
 		proto.detachedCallback = function () {
-			console.log('instance of hello world element is destroyed');
+			console.log('instance of t-login-widget element is destroyed');
 		};
 
 		proto.attributeChangedCallback = function (attrName, oldVal, newVal) {
 			console.log('attribute ', attrName, ' is changed from ', oldVal, ' to ', newVal);
 		};
 
-		document.registerElement('hello-world', {
+		document.registerElement('t-login-widget', {
 			prototype: proto
 		});
 	})();
