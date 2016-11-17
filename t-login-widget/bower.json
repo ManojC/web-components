@@ -1,13 +1,12 @@
 {
   "name": "t-login-widget",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "authors": [
     "Manoj Chalode <chalodem@gmail.com>"
   ],
   "description": "This element gives login page using web components",
   "main": "t-login-widget.html",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
   }
